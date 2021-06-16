@@ -1,38 +1,23 @@
-# ASCII Tetris game
+# ASCII Tetris game for the Color Computer
+
+Prerrequisites:
+
+CMOC compiler 0.1.71 or later: follow the installation instructions [here](http://perso.b2b2c.ca/~sarrazip/dev/cmoc.html) 
 
 To compile, use:
 
     make
 
+
 It will output a binary file Tetris.
 
 Controls:
 
-    q: 		left
-    s: 		bottom (quicker)
-    d: 		right
+    Q: 		left
+    S: 		bottom (quicker)
+    D: 		right
     [space]: 	rotate
 
-What it looks like:
-
-    [LEVEL: 1 | SCORE: 0]
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
-    !                        !
-    !                        !
-    !                        !
-    !                        !
-    !          O O           !
-    !          O             !
-    !          O             !
-    !                        !
-    !                        !
-    !                        !
-    !                        !
-    !              &         !
-    !              &         !
-    !      # #   X & &       !
-    !      # # X X X @ @ @ @ !
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # License
 

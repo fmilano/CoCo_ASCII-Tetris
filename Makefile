@@ -1,10 +1,6 @@
 EXE=Tetris
-OBJECTS=main.o tetris.o
-CC=gcc
-FLAGS=-I./ -O3 -lrt
+CC=cmoc
+FLAGS=-I./ 
 
-$(EXE): $(OBJECTS)
-	$(CC) $(FLAGS) $(OBJECTS) -o $(EXE)
-
-%.o: %.c
-	$(CC) $(FLAGS) -c $< -o $@
+tetris: main.c tetris.c tetris.h
+	$(CC) $(FLAGS)  tetris.c main.c

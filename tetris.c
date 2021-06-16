@@ -1,17 +1,21 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <tetris.h>
-#include <termios.h>
-#include <signal.h>
-#include <time.h>
-#include <fcntl.h>
+#include <cmoc.h>
+#include <coco.h>
 
-#define WIDTH   12
-#define HEIGHT  16
+
+#include "tetris.h"
+
+#define WIDTH   14
+#define HEIGHT  12
 
 struct tetris_level {
     int score;
     int nsec;
+};
+
+struct tetris_block {
+    int w;
+    int h;
+    char data[5][5];
 };
 
 struct tetris {
@@ -19,40 +23,55 @@ struct tetris {
     int level;
     int gameover;
     int score;
-    struct tetris_block {
-        char data[5][5];
-        int w;
-        int h;
-    } current;
+    struct tetris_block current;
     int x;
     int y;
 } t;
 
 struct tetris_block blocks[] =
 {
-    {{"##", 
-      "##"},
-    2, 2
+    { 2, 2,
+     {"##  ", 
+      "##  ",
+      "    ",
+      "    ",
+      "    "}
     },
-    {{" X ",
-      "XXX"},
-    3, 2
+    {3, 2,
+     {" X  ",
+      "XXX ",
+      "    ",
+      "    ",
+      "    "}
     },
-    {{"@@@@"},
-    4, 1
+    {4, 1,
+     {"@@@@",
+      "    ",
+      "    ",
+      "    ",
+      "    "}
     },
-    {{"OO",
-       "O ",
-       "O "},
-    2, 3
+    {2, 3,
+     {"OO  ",
+      "O   ",
+      "O   ",
+      "    ",
+      "    "}
     },
-    {{"&&",
-      " &",
-      " &"},
-    2, 3},
-    {{"ZZ ",
-      " ZZ"},
-    3, 2}
+    {2, 3,
+     {"&&  ",
+      " &  ",
+      " &  ",
+      "    ",
+      "    "}
+    },
+    {3, 2,
+     {"ZZ  ",
+      " ZZ ",
+      "    ",
+      "    ",
+      "    "}
+    }
 };
 
 struct tetris_level levels[]=
@@ -75,29 +94,6 @@ struct tetris_level levels[]=
 
 #define TETRIS_PIECES (sizeof(blocks)/sizeof(struct tetris_block))
 #define TETRIS_LEVELS (sizeof(levels)/sizeof(struct tetris_level))
-
-struct termios save;
-
-void
-tetris_cleanup_io() {
-    tcsetattr(fileno(stdin),TCSANOW,&save);
-}
-
-void
-tetris_signal_quit(int s) {
-    tetris_cleanup_io();
-}
-
-void
-tetris_set_ioconfig() {
-    struct termios custom;
-    int fd=fileno(stdin);
-    tcgetattr(fd, &save);
-    custom=save;
-    custom.c_lflag &= ~(ICANON|ECHO);
-    tcsetattr(fd,TCSANOW,&custom);
-    fcntl(fd, F_SETFL, fcntl(fd, F_GETFL, 0)|O_NONBLOCK);
-}
 
 void
 tetris_init() {
@@ -160,7 +156,8 @@ tetris_hittest() {
 
 void
 tetris_new_block() {
-    t.current=blocks[random()%TETRIS_PIECES];
+    t.current=blocks[rand()%TETRIS_PIECES];
+    
     t.x=(WIDTH/2) - (t.current.w/2);
     t.y=0;
     if (tetris_hittest()) {
@@ -206,10 +203,10 @@ void
 tetris_gravity() {
     int x,y;
     t.y++;
-    if (tetris_hittest(t)) {
+    if (tetris_hittest()) {
         t.y--;
-        tetris_print_block(t);
-        tetris_new_block(t);
+        tetris_print_block();
+        tetris_new_block();
     }
 }
 
@@ -257,53 +254,50 @@ tetris_level() {
 
 void
 tetris_run() {
-    struct timespec tm;
     
     char cmd;
     int count=0;
-    tetris_set_ioconfig();
     tetris_init();
-    srand(time(NULL));
-
-    tm.tv_sec=0;
-    tm.tv_nsec=1000000;
+    /*srand(993765);*/
 
     tetris_new_block();
+
     while (!t.gameover) {
-        nanosleep(&tm, NULL);
+        delay(1);
         count++;
         if (count%50 == 0) {
             tetris_print();
         }
-        if (count%350 == 0) {
+        if (count%50 == 0) {
             tetris_gravity();
             tetris_check_lines();
         }
-        while ((cmd=getchar())>0) {
+        while ((cmd=inkey())>0) {
             switch (cmd) {
-                case 'q':
+                case 'Q':
                     t.x--;
                     if (tetris_hittest())
                         t.x++;
                     break;
-                case 'd':
+                case 'D':
                     t.x++;
                     if (tetris_hittest())
                         t.x--;
                     break;
-                case 's':
+                case 'S':
                     tetris_gravity();
                     break;
                 case ' ':
                     tetris_rotate();
                     break;
             }
+           
         }
-        tm.tv_nsec=tetris_level();
+        
+        //tm.tv_nsec=tetris_level();
     }
 
     tetris_print();
     printf("*** GAME OVER ***\n");
-
-    tetris_cleanup_io();
+    printf("FEDE! %d %d", t.current.w, t.current.h);
 }
