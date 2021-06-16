@@ -9,7 +9,7 @@ To compile, use:
     make
 
 
-It will output a binary file Tetris.
+It will output a Disk Extended Color Basic (DECB) binary file *tetris.bin*
 
 Controls:
 
