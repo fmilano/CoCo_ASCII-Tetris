@@ -260,7 +260,7 @@ void tetris_run() {
     tetris_new_block();
 
     while (!t.gameover) {
-        delay(1);
+
         count++;
         if (count%10 == 0) {
             tetris_print();
