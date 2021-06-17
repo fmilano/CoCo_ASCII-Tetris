@@ -13,11 +13,13 @@ It will output a Disk Extended Color Basic (DECB) binary file *tetris.bin*
 
 Controls:
 
-    Q: 		left
-    S: 		bottom (quicker)
-    D: 		right
-    [space]: 	rotate
+    Left arrow: 		left
+    Down arrow: 		bottom (quicker)
+    Right arrow: 		right
+    Up arrow: 	        rotate
 
+
+![Screenshot](screenshot.png)
 
 # License
 
